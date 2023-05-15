@@ -1,0 +1,75 @@
+"A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+
+type MemoTest {
+    id: ID!
+    name: String!
+    high_score: Float
+    user_name: String
+    images: [Images!] @hasMany
+}
+
+type Images {
+    id: ID!
+    url: String!
+}
+type GameSessions {
+    id: ID!
+    memoTest: MemoTest @belongsTo
+    user_token: String!
+    user_name: String!
+    retries: Int!
+    numbe_of_pairs: Int!
+    pairs: [Pairs!] @hasMany
+    score: Float!
+    state: String!
+}
+
+type Pairs {
+    id: ID!
+    images: Images @belongsTo
+    state: String!
+    position_a: Int!
+    position_b: Int!
+    image_id: ID!
+}
+
+input ImagesInput {
+    id: ID
+    url: String!
+}
+
+input PairsInput {
+    id: Int
+}
+
+"Indicates what fields are available at the top level of a query operation."
+type Query {
+    memoTest: [MemoTest!]! @paginate(type: SIMPLE)
+    memoTestById(id: ID! @eq): MemoTest @find
+    gameSessionsById(id: ID! @eq): GameSessions @find
+    gameSessionsByTokenState(
+        user_token: String! @eq
+        state: String! @eq
+    ): [GameSessions!]! @paginate(type: SIMPLE)
+}
+
+type Mutation {
+    createMemoTest(name: String!, images: [ImagesInput!]): MemoTest
+    updateMemoTest(id: ID! @eq, name: String!): MemoTest @update
+    deleteMemoTest(id: ID! @eq): MemoTest @delete
+    addImagesToMemoTest(id: ID! @eq, images: [ImagesInput!]): MemoTest
+    removeImagesFromMemoTest(id: ID! @eq, images: [ImagesInput!]): MemoTest
+    createGameSession(
+        memo_test_id: ID!
+        user_token: String!
+        user_name: String!
+    ): GameSessions
+    checkPointGameSession(
+        game_session: ID!
+        user_token: String
+        pairs: [PairsInput!]
+    ): GameSessions
+    finishGameSessions(game_session: ID!, user_token: String!): GameSessions
+}
