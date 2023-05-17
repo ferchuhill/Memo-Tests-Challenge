@@ -51,17 +51,7 @@ services:
         - "${DB_USERNAME}"
       retries: 3
       timeout: 5s
-  # front:
-  #   build:
-  #     context: ./front
-  #     dockerfile: Dockerfile
-  #   container_name: dev-front
-  #   volumes:
-  #     - "./front:/app"
-  #   ports:
-  #     - 8080:3000
-  #   environment:
-  #     NODE_ENV: development
+
 networks:
   sail:
     driver: bridge

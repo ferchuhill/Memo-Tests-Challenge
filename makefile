@@ -1,15 +1,13 @@
-.PHONY: help build up down restart clean
-
 help:
 	@echo "Available targets:"
 	@echo "  help: Display this help message."
 	@echo "  up.prod: Start the application in production mode."
-    @echo "  up.prod.build: Start the application in production mode and rebuild the images."
-    @echo "  up.dev: Start the application in development mode."
-    @echo "  up.dev.build: Start the application in development mode and rebuild the images."
-    @echo "  down: Stop the application."
-    @echo "  test: Run the tests."
-    @echo "  storybook: Run the storybook."
+	@echo "  up.prod.build: Start the application in production mode and rebuild the images."
+	@echo "  up.dev: Start the application in development mode."
+	@echo "  up.dev.build: Start the application in development mode and rebuild the images."
+	@echo "  down: Stop the application."
+	@echo "  test: Run the tests."
+	@echo "  storybook: Run the storybook."
 
 up.prod:
 	./vendor/bin/sail up -d
@@ -29,11 +27,14 @@ down:
 	./vendor/bin/sail down
 
 test:
+	./vendor/bin/sail -f docker-compose.dev.yml up -d
 	./vendor/bin/sail test
+	npm install --prefix front
 	npm run test --prefix front
 
 storybook:
 	npm run storybook --prefix front
 
 migration.seed:
+	./vendor/bin/sail -f docker-compose.dev.yml up -d
 	./vendor/bin/sail artisan migrate:fresh --seed
